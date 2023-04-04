@@ -9,17 +9,17 @@ export default function overwriteEventsAndHistory() {
         loadApps()
         return result
     }
-    
+
     window.history.replaceState = function (state: any, title: string, url: string) {
         const result = originalReplaceState.call(this, state, title, url)
         loadApps()
         return result
     }
-    
+
     window.addEventListener('popstate', () => {
         loadApps()
     }, true)
-    
+
     window.addEventListener('hashchange', () => {
         loadApps()
     }, true)

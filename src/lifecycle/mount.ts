@@ -1,14 +1,16 @@
-import { isPromise } from 'src/utils/utils'
-import { Application, AppStatus } from '../types'
+import { AppStatus, Application } from 'src/types'
+import { isPromise } from 'src/utils'
 
-export default function mountApp(app: Application): Promise<any> {
+// 调用mount
+export function mountApp(app: Application) {
     app.status = AppStatus.BEFORE_MOUNT
 
     let result = (app as any).mount(app.props)
+
     if (!isPromise(result)) {
         result = Promise.resolve(result)
     }
-    
+
     return result
     .then(() => {
         app.status = AppStatus.MOUNTED

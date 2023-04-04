@@ -1,14 +1,15 @@
-import { isPromise } from 'src/utils/utils'
-import { AnyObject, Application, AppStatus } from '../types'
+import { AnyObject, AppStatus, Application } from 'src/types'
+import { isFunction, isObject, isPromise } from 'src/utils'
 
-export default async function bootstrapApp(app: Application) {    
+// 获取props bootstrap mount unmount
+export async function bootstrapApp(app: Application) {
     const { bootstrap, mount, unmount } = await app.loadApp()
 
     validateLifeCycleFunc('bootstrap', bootstrap)
     validateLifeCycleFunc('mount', mount)
     validateLifeCycleFunc('unmount', unmount)
 
-    app.bootstrap = bootstrap
+    app.bootsrap = bootstrap
     app.mount = mount
     app.unmount = unmount
 
@@ -19,29 +20,28 @@ export default async function bootstrapApp(app: Application) {
         throw err
     }
 
-    let result = (app as any).bootstrap(app.props)
+    let result = (app as any).bootsrap(app.props)
+
     if (!isPromise(result)) {
         result = Promise.resolve(result)
     }
-    
-    return result
-    .then(() => {
+
+    return result.then(() => {
         app.status = AppStatus.BOOTSTRAPPED
-    })
-    .catch((err: Error) => {
+    }).catch((err: Error) => {
         app.status = AppStatus.BOOTSTRAP_ERROR
         throw err
     })
 }
 
-async function getProps(props: Function | AnyObject) {
-    if (typeof props === 'function') return props()
-    if (typeof props === 'object') return props
-    return {}
-}
-
 function validateLifeCycleFunc(name: string, fn: any) {
-    if (typeof fn !== 'function') {
+    if (!isFunction(fn)) {
         throw Error(`The "${name}" must be a function`)
     }
+}
+
+async function getProps(props: Function | AnyObject) {
+    if (typeof props === 'function') return props()
+    if (isObject(props)) return props
+    return {}
 }

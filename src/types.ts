@@ -1,3 +1,14 @@
+export interface Application {
+    name: string;
+    loadApp: () => Promise<any>;
+    activeRule: Function | string;
+    status?: string;
+    props: AnyObject | Function;
+    bootsrap?: (props: AnyObject) => Promise<any>
+    mount?: (props: AnyObject) => Promise<any>
+    unmount?: (props: AnyObject) => Promise<any>
+}
+
 export interface AnyObject {
     [key: string]: any
 }
@@ -12,16 +23,4 @@ export enum AppStatus {
     BOOTSTRAP_ERROR = 'BOOTSTRAP_ERROR',
     MOUNT_ERROR = 'MOUNT_ERROR',
     UNMOUNT_ERROR = 'UNMOUNT_ERROR',
-}
-
-export interface Application {
-    name: string
-    activeRule: Function | string
-    loadApp: () => Promise<any>
-    props: AnyObject | Function
-    status?: AppStatus
-    container?: HTMLElement
-    bootstrap?: (props: AnyObject) => Promise<any>
-    mount?: (props: AnyObject) => Promise<any>
-    unmount?: (props: AnyObject) => Promise<any>
 }

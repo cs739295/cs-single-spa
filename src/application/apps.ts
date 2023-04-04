@@ -1,27 +1,27 @@
-import bootstrapApp from '../lifecycle/bootstrap'
-import mountApp from '../lifecycle/mount'
-import unMountApp from '../lifecycle/unmount'
-import { Application, AppStatus } from '../types'
+import { bootstrapApp } from 'src/lifecycle/bootstrap'
+import { mountApp } from 'src/lifecycle/mount'
+import { unMountApp } from 'src/lifecycle/unmount'
+import { AppStatus, Application } from 'src/types'
 
 export const apps: Application[] = []
 
 export async function loadApps() {
     const toUnMountApp = getAppsWithStatus(AppStatus.MOUNTED)
     await Promise.all(toUnMountApp.map(unMountApp))
-    
+
     const toLoadApp = getAppsWithStatus(AppStatus.BEFORE_BOOTSTRAP)
     await Promise.all(toLoadApp.map(bootstrapApp))
 
     const toMountApp = [
-        ...getAppsWithStatus(AppStatus.BOOTSTRAPPED),
         ...getAppsWithStatus(AppStatus.UNMOUNTED),
+        ...getAppsWithStatus(AppStatus.BOOTSTRAPPED),
     ]
-    
     await toMountApp.map(mountApp)
 }
 
 function getAppsWithStatus(status: AppStatus) {
     const result: Application[] = []
+
     apps.forEach(app => {
         // tobootstrap or tomount
         if (isActive(app) && app.status === status) {
