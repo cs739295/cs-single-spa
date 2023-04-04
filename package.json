@@ -18,12 +18,6 @@
     "url": "https://github.com/woai3c/mini-single-spa/issues"
   },
   "homepage": "https://github.com/woai3c/mini-single-spa#readme",
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "commit-msg": "FORCE_COLOR=1 node scripts/verify-commit.js"
-    }
-  },
   "lint-staged": {
     "src/**/*.{js,ts}": "eslint"
   },
