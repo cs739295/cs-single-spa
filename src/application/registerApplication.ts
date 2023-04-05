@@ -1,6 +1,6 @@
 import { AppStatus, Application } from 'src/types'
 import { isString } from 'src/utils'
-import { apps } from './apps'
+import { appMaps } from 'src/utils/application'
 
 // 处理activeRule
 export default function registerApplication(app: Application) {
@@ -8,6 +8,14 @@ export default function registerApplication(app: Application) {
         const path = app.activeRule
         app.activeRule = (location = window.location) => location.pathname === path
     }
-    app.status = AppStatus.BEFORE_BOOTSTRAP
-    apps.push(app)
+    app = {
+        ...app,
+        status: AppStatus.BEFORE_BOOTSTRAP,
+        pageBody: '',
+        loadedURLs: [],
+        scripts: [],
+        styles: [],
+        isFirstLoad: true,
+    }
+    appMaps.set(app.name, app)
 }

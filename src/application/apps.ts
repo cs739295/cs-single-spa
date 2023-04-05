@@ -2,8 +2,7 @@ import { bootstrapApp } from 'src/lifecycle/bootstrap'
 import { mountApp } from 'src/lifecycle/mount'
 import { unMountApp } from 'src/lifecycle/unmount'
 import { AppStatus, Application } from 'src/types'
-
-export const apps: Application[] = []
+import { appMaps } from 'src/utils/application'
 
 export async function loadApps() {
     const toUnMountApp = getAppsWithStatus(AppStatus.MOUNTED)
@@ -16,13 +15,16 @@ export async function loadApps() {
         ...getAppsWithStatus(AppStatus.UNMOUNTED),
         ...getAppsWithStatus(AppStatus.BOOTSTRAPPED),
     ]
+
+    console.log(toMountApp)
+
     await toMountApp.map(mountApp)
 }
 
 function getAppsWithStatus(status: AppStatus) {
     const result: Application[] = []
 
-    apps.forEach(app => {
+    appMaps.forEach(app => {
         // tobootstrap or tomount
         if (isActive(app) && app.status === status) {
             switch (app.status) {

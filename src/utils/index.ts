@@ -13,3 +13,7 @@ export function isObject(value: any) {
 export function isPromise(p: any) {
     return p && Object.prototype.toString.call(p) === '[object Promise]'
 }
+
+export function nextTick(callback: () => void) {
+    Promise.resolve().then(callback)
+}
