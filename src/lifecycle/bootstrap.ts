@@ -1,8 +1,9 @@
 import { Sandbox } from 'src/sandbox/Sandbox'
 import { AnyObject, AppStatus, Application } from 'src/types'
 import { isFunction, isObject } from 'src/utils'
-import { triggerAppHook } from 'src/utils/application'
+import { isSandboxEnabled, triggerAppHook } from 'src/utils/application'
 import { addStyles } from 'src/utils/dom'
+import { originalWindow } from 'src/utils/originalEnv'
 import { executeScripts, parseHTMLandloadSources } from 'src/utils/source'
 
 // 获取props bootstrap mount unmount
@@ -17,8 +18,11 @@ export async function bootstrapApp(app: Application) {
     }
 
     // 核心：代理window对象 & 重写window某些属性进行劫持 & 快照
-    app.sandbox = new Sandbox(app)
-    app.sandbox.start()
+    // 开启沙箱
+    if (isSandboxEnabled(app)) {
+        app.sandbox = new Sandbox(app)
+        app.sandbox.start()
+    }
     app.container.innerHTML = app.pageBody
 
     // 执行子应用入口页面的 style script 标签
@@ -46,7 +50,10 @@ export async function bootstrapApp(app: Application) {
     // 子应用首次加载的脚本执行完就不再需要了
     app.scripts.length = 0
     // 记录首次加载时 window 快照，重新挂载子应用时恢复
-    app.sandbox.recordWindowSnapshot()
+    if (isSandboxEnabled(app)) {
+        // 记录当前的 window 快照，重新挂载子应用时恢复
+        app.sandbox.recordWindowSnapshot()
+    }
 
     triggerAppHook(app, 'bootstrapped', AppStatus.BOOTSTRAPPED)
 }
@@ -64,7 +71,10 @@ async function getProps(props: Function | AnyObject) {
 }
 
 function getLifeCycleFuncs(app: Application) {
-    const result = app.sandbox.proxyWindow.__SINGLE_SPA__
+    let result = originalWindow.__SINGLE_SPA__
+    if (isSandboxEnabled(app)) {
+        result = app.sandbox.proxyWindow.__SINGLE_SPA__
+    }
     if (isFunction(result)) {
         return result()
     }

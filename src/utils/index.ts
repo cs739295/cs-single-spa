@@ -1,3 +1,5 @@
+import { originalDocument, originalWindow } from './originalEnv'
+
 export function isString(value: any) {
     return typeof value === 'string'
 }
@@ -16,4 +18,8 @@ export function isPromise(p: any) {
 
 export function nextTick(callback: () => void) {
     Promise.resolve().then(callback)
+}
+
+export function isInBrowser() {
+    return typeof originalWindow === 'object' && typeof originalDocument === 'object'
 }

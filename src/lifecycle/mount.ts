@@ -1,14 +1,16 @@
 import { addStyles } from '../utils/dom'
 import { Application, AppStatus } from '../types'
-import { triggerAppHook } from '../utils/application'
+import { isSandboxEnabled, triggerAppHook } from '../utils/application'
 
 export function mountApp(app: Application): Promise<any> {
     triggerAppHook(app, 'beforeMount', AppStatus.BEFORE_MOUNT)
 
     if (!app.isFirstLoad) {
-        // 重新加载子应用时恢复快照
-        app.sandbox.restoreWindowSnapshot()
-        app.sandbox.start()
+        if (isSandboxEnabled(app)) {
+            // 重新加载子应用时恢复快照
+            app.sandbox.restoreWindowSnapshot()
+            app.sandbox.start()
+        }
         app.container.innerHTML = app.pageBody
         addStyles(app.styles)
     } else {

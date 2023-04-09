@@ -41,6 +41,6 @@ function getAppsWithStatus(status: AppStatus) {
     return result
 }
 
-function isActive(app: Application) {
+export function isActive(app: Application) {
     return typeof app.activeRule === 'function' && app.activeRule(window.location)
 }
