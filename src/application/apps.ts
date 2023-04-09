@@ -16,8 +16,6 @@ export async function loadApps() {
         ...getAppsWithStatus(AppStatus.BOOTSTRAPPED),
     ]
 
-    console.log(toMountApp)
-
     await toMountApp.map(mountApp)
 }
 

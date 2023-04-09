@@ -42,9 +42,8 @@ export async function unmount() {
     router = null
 }
 
-
 if (window.__IS_SINGLE_SPA__) {
-    window.__SINGLE_SPA__= {
+    window.__SINGLE_SPA__ = {
         mount,
         unmount
     }
@@ -68,6 +67,8 @@ if (window.__IS_SINGLE_SPA__) {
     setTimeout(() => {
         console.log('setTimeout')
     }, 3000)
+
+    console.log(document.querySelector('div'))
 } else {
     render()
 }

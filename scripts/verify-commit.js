@@ -8,7 +8,6 @@ const msg = require('fs')
 const commitRE = /^(feat|fix|docs|style|refactor|perf|test|workflow|build|ci|chore|release|workflow)(\(.+\))?: .{1,80}/
 
 if (!commitRE.test(msg)) {
-    console.log()
     console.error(
         `  ${chalk.bgRed.white(' ERROR ')} ${chalk.red(
             '不合法的 commit 消息格式',

@@ -1,6 +1,7 @@
 import { Application, Source } from 'src/types'
 import { createElement, removeNode } from './dom'
 import { isFunction } from '.'
+import { addCSSScope } from 'src/sandbox/addCSSScope'
 const urlReg = /^http(s)?:\/\//
 function isCorrectURL(url = '') {
     return urlReg.test(url)
@@ -142,6 +143,7 @@ export function loadStyles(styles: Source[]) {
 
     return styles
     .map((item) => {
+        // 全局的
         if (item.isGlobal) {
             if (item.url) {
                 const link = createElement('link', {
@@ -161,6 +163,7 @@ export function loadStyles(styles: Source[]) {
             return
         }
 
+        // 非全局的
         if (item.url) return loadSourceText(item.url)
         return Promise.resolve(item.value)
     })
@@ -220,11 +223,15 @@ export function executeScripts(scripts: string[], app: Application) {
 }
 
 export async function fetchStyleAndReplaceStyleContent(
-    style: Node,
+    style: HTMLStyleElement,
     url: string,
+    app: Application,
 ) {
     const content = await loadSourceText(url)
     style.textContent = content
+    if (app.sandboxConfig?.css) {
+        addCSSScope(style, app)
+    }
 }
 
 export async function fetchScriptAndExecute(url: string, app: Application) {

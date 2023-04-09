@@ -35,7 +35,6 @@ export function addStyles(styles: string[] | HTMLStyleElement[]) {
                 type: 'text/css',
                 textContent: item,
             })
-
             head.appendChild(node)
         } else {
             head.appendChild(item)

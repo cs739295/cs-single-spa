@@ -24,7 +24,8 @@ export async function bootstrapApp(app: Application) {
     // 执行子应用入口页面的 style script 标签
     addStyles(app.styles)
 
-    // 核心：设置子应用window作用域
+    // 核心：设置子应用window作用域 & 同时会动态插入一些标签。
+    // 因此sandbox 要在执行scripts标签前实例化
     executeScripts(app.scripts, app)
 
     const { mount, unmount } = await getLifeCycleFuncs(app)
